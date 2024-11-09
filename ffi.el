@@ -33,11 +33,11 @@
 (gv-define-simple-setter ffi--mem-ref ffi--mem-set t)
 
 (defmacro define-ffi-library (symbol name)
-  (let ((library (cl-gensym)))
-    (set library nil)
-    `(defun ,symbol ()
-       (or ,library
-           (setq ,library (ffi--dlopen (locate-library ,name)))))))
+  `(progn
+     (defvar ,symbol nil)
+     (defun ,symbol ()
+       (or ,symbol
+           (setq ,symbol (ffi--dlopen (locate-library ,name)))))))
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
