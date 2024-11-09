@@ -40,6 +40,7 @@
            (setq ,library (ffi--dlopen ,name))))))
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
+  (declare (indent defun))
   (let* (;; Turn variable references into actual types; while keeping
          ;; keywords the same.
          (arg-types (mapcar #'symbol-value arg-types))
@@ -107,6 +108,7 @@
 NAME must be a symbol.
 Each SLOT must be of the form `(SLOT-NAME :type TYPE)', where
 SLOT-NAME is a symbol and TYPE is an FFI type descriptor."
+  (declare (indent defun))
   (ffi--struct-union-helper name slots #'ffi--define-struct
                             #'ffi--lay-out-struct))
 
@@ -116,12 +118,14 @@ SLOT-NAME is a symbol and TYPE is an FFI type descriptor."
 NAME must be a symbol.
 Each SLOT must be of the form `(SLOT-NAME :type TYPE)', where
 SLOT-NAME is a symbol and TYPE is an FFI type descriptor."
+  (declare (indent defun))
   (ffi--struct-union-helper name slots #'ffi--define-union
                             (lambda (types)
                               (make-list (length types) 0))))
 
 (defmacro define-ffi-array (name type length &optional docstring)
   ;; This is a hack until libffi gives us direct support.
+  (declare (indent defun))
   (let ((type-description
          (apply #'ffi--define-struct
                 (make-list (eval length) (symbol-value type)))))
