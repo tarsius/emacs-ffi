@@ -46,12 +46,13 @@ is specified, in which case search that list of directories instead."
 (gv-define-simple-setter ffi--mem-ref ffi--mem-set t)
 
 (defmacro define-ffi-library (symbol name &optional filename)
-  `(progn
-     (defvar ,symbol nil)
-     (defun ,symbol ()
-       (or ,symbol
-           (setq ,symbol
-                 (ffi--dlopen (or ,filename (ffi--locate-module ,name))))))))
+  (let ((symbol (intern (format "ffi-%s" symbol))))
+    `(progn
+       (defvar ,symbol nil)
+       (defun ,symbol ()
+         (or ,symbol
+             (setq ,symbol
+                   (ffi--dlopen (or ,filename (ffi--locate-module ,name)))))))))
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
