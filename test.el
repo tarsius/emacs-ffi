@@ -1,4 +1,4 @@
-;;; test.el --- FFI tests for Emacs
+;;; test.el --- FFI tests for Emacs  -*- lexical-binding: t; -*-
 
 ;; This is is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -56,14 +56,14 @@
                 (ffi--type-alignment :int)))))
 
 (ert-deftest ffi-struct-layout-offsets ()
-  (let* ((types '(:pointer :int))
-         (struct-type (apply #'ffi--define-struct types)))
+  (let ((types '(:pointer :int)))
+    (apply #'ffi--define-struct types)
     (should (equal (ffi--lay-out-struct types)
                    (list 0 (ffi--type-size :pointer))))))
 
 (ert-deftest ffi-struct-layout-offsets-2 ()
-  (let* ((types '(:char :pointer))
-         (struct-type (apply #'ffi--define-struct types)))
+  (let ((types '(:char :pointer)))
+    (apply #'ffi--define-struct types)
     (should (equal (ffi--lay-out-struct types)
                    (list 0 (ffi--type-alignment :pointer))))))
 
