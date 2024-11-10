@@ -40,7 +40,7 @@
 
 (ert-deftest ffi-call-callback ()
   (let* ((cif (ffi--prep-cif :int [:int]))
-	 (pointer-to-callback (ffi-make-closure cif #'callback)))
+         (pointer-to-callback (ffi-make-closure cif #'callback)))
     (should (eq (test-call-callback pointer-to-callback) 23))))
 
 (define-ffi-function test-add "test_add" :int [:int :int] test.so)
@@ -51,21 +51,21 @@
 (ert-deftest ffi-struct-layout ()
   (let ((struct-type (ffi--define-struct :int)))
     (should (eq (ffi--type-size struct-type)
-		(ffi--type-size :int)))
+                (ffi--type-size :int)))
     (should (eq (ffi--type-alignment struct-type)
-		(ffi--type-alignment :int)))))
+                (ffi--type-alignment :int)))))
 
 (ert-deftest ffi-struct-layout-offsets ()
   (let* ((types '(:pointer :int))
-	 (struct-type (apply #'ffi--define-struct types)))
+         (struct-type (apply #'ffi--define-struct types)))
     (should (equal (ffi--lay-out-struct types)
-		   (list 0 (ffi--type-size :pointer))))))
+                   (list 0 (ffi--type-size :pointer))))))
 
 (ert-deftest ffi-struct-layout-offsets-2 ()
   (let* ((types '(:char :pointer))
-	 (struct-type (apply #'ffi--define-struct types)))
+         (struct-type (apply #'ffi--define-struct types)))
     (should (equal (ffi--lay-out-struct types)
-		   (list 0 (ffi--type-alignment :pointer))))))
+                   (list 0 (ffi--type-alignment :pointer))))))
 
 (define-ffi-struct test-struct
   (stringval :type :pointer)
@@ -77,7 +77,7 @@
 (ert-deftest ffi-structure-return ()
   (let ((struct-value (test-get-struct)))
     (should (equal (ffi-get-c-string (test-struct-stringval struct-value))
-		   "string"))
+                   "string"))
     (should (eq (test-struct-intval struct-value) 23))))
 
 (define-ffi-function test-get-struct-int "test_get_struct_int"
