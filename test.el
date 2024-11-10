@@ -13,6 +13,9 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this.  If not, see <https://www.gnu.org/licenses/>.
 
+;;; Code:
+
+(require 'ert)
 (require 'ffi)
 
 (define-ffi-library test.so "test")
