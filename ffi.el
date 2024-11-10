@@ -28,7 +28,20 @@
 
 (require 'cl-macs)
 
-(eval-and-compile (module-load (locate-library "ffi-module")))
+(eval-and-compile
+  (defun ffi--locate-module (module &optional path)
+    "Show the precise file name of the ffi module MODULE.
+MODULE should be the file name of the module, a string, which must omit
+the suffix.  Search for the module in `load-path', unless optional PATH
+is specified, in which case search that list of directories instead."
+    ;; Override `load-suffixes' to avoid matching lisp libraries.  On
+    ;; macOS, modules can have one of two suffixes ".dylib" and ".so".
+    (let ((load-suffixes (if (eq system-type 'darwin)
+                             (list module-file-suffix ".so")
+                           (list module-file-suffix))))
+      (locate-library module nil path)))
+
+  (module-load (ffi--locate-module "ffi-module")))
 
 (gv-define-simple-setter ffi--mem-ref ffi--mem-set t)
 
@@ -37,7 +50,7 @@
      (defvar ,symbol nil)
      (defun ,symbol ()
        (or ,symbol
-           (setq ,symbol (ffi--dlopen (locate-library ,name)))))))
+           (setq ,symbol (ffi--dlopen (ffi--locate-module ,name)))))))
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
