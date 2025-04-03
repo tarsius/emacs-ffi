@@ -47,19 +47,18 @@
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
-  (let* (;; Turn variable references into actual types; while keeping
-         ;; keywords the same.
-         (arg-types (mapcar #'symbol-value arg-types))
-         (arg-names (mapcar (lambda (_ignore) (cl-gensym)) arg-types))
-         (arg-types (vconcat arg-types))
-         (function (cl-gensym))
-         (cif (ffi--prep-cif (symbol-value return-type) arg-types)))
-    (set function nil)
-    `(defun ,name (,@arg-names)
-       (unless ,function
-         (setq ,function (ffi--dlsym ,c-name (,library))))
-       ;; FIXME do we even need a separate prep?
-       (ffi--call ,cif ,function ,@arg-names))))
+  (let* ((n 0)
+         (args (mapcar (lambda (_) (intern (format "arg%d" (cl-incf n)))) arg-types))
+         (sym (intern (concat "ffi-fun-" c-name))))
+    `(progn
+       (defvar ,sym nil)
+       (defun ,name (,@args)
+         (unless ,sym
+           (setq ,sym (ffi--dlsym ,c-name (,library))))
+         (ffi--call
+          (ffi--prep-cif ,return-type
+                         (vconcat (mapcar #'symbol-value ',arg-types)))
+          ,sym ,@args)))))
 
 (defun ffi-lambda (function-pointer return-type arg-types)
   (let ((cif (ffi--prep-cif return-type (vconcat arg-types))))
@@ -89,9 +88,9 @@
                                 (cl-assert (eq (cadr slot) :type))
                                 (symbol-value (cl-caddr slot)))
                               slots))
-         (the-type (apply definer-function field-types))
          (field-offsets (funcall layout-function field-types)))
-    (push `(defvar ,name ,the-type ,docstring)
+    (push `(defvar ,name (apply #',definer-function ',field-types)
+             ,docstring)
           result-forms)
     (cl-mapc
      (lambda (slot type offset)
@@ -132,10 +131,9 @@ SLOT-NAME is a symbol and TYPE is an FFI type descriptor."
 (defmacro define-ffi-array (name type length &optional docstring)
   ;; This is a hack until libffi gives us direct support.
   (declare (indent defun))
-  (let ((type-description
-         (apply #'ffi--define-struct
-                (make-list (eval length) (symbol-value type)))))
-    `(defvar ,name ,type-description ,docstring)))
+  `(defvar ,name
+     (apply #'ffi--define-struct (make-list ,length ,type))
+     ,docstring))
 
 (defsubst ffi-aref (array type index)
   (ffi--mem-ref (ffi-pointer+ array (* index (ffi--type-size type))) type))
