@@ -22,6 +22,12 @@ CFLAGS  ?= -g3 -Og -finline-small-functions -shared -fPIC
 
 all: module test-module lisp
 
+help:
+	$(info make all          - generate lisp and manual)
+	$(info make test         - run tests)
+	$(info make clean        - remove generated files)
+	@printf "\n"
+
 module: ffi-module.so
 
 ffi-module.so: ffi-module.o
