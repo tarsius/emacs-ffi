@@ -3,16 +3,16 @@
 -include config.mk
 include default.mk
 
-# Where your dynamic-module-enabled Emacs build lies.
-EMACS_BUILDDIR ?= /home/tromey/Emacs/emacs
+EMACS      ?= emacs
+EMACS_ARGS ?=
+LOAD_PATH  ?= -L .
 
-LDFLAGS = -shared
-LIBS = -lffi -lltdl
-CFLAGS += -g3 -Og -finline-small-functions -shared -fPIC \
-  -I$(EMACS_BUILDDIR)/src/ -I$(EMACS_BUILDDIR)/lib/
+LDFLAGS ?= -shared
+LIBS    ?= -lffi -lltdl
+CFLAGS  ?= -g3 -Og -finline-small-functions -shared -fPIC
 
-# Set this to debug make check.
-#GDB = gdb --args
+# Set this to debug "make check":
+# GDB = gdb --args
 
 all: module test-module
 
@@ -26,8 +26,8 @@ ffi-module.o: ffi-module.c
 check: ffi-module.so test.so
 	LD_LIBRARY_PATH=`pwd`:$$LD_LIBRARY_PATH; \
 	  export LD_LIBRARY_PATH; \
-	$(GDB) $(EMACS_BUILDDIR)/src/emacs -batch -L `pwd` -l ert -l test.el \
-	  -f ert-run-tests-batch-and-exit
+	$(GDB) $(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -l test.el \
+	-f ert-run-tests-batch-and-exit
 
 test-module: test.so
 
