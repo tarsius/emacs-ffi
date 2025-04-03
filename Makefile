@@ -17,7 +17,7 @@ LDFLAGS ?= -shared
 LIBS    ?= -lffi -lltdl
 CFLAGS  ?= -g3 -Og -finline-small-functions -shared -fPIC
 
-# Set this to debug "make check":
+# Set this to debug "make test":
 # GDB = gdb --args
 
 all: module test-module lisp
@@ -28,12 +28,6 @@ ffi-module.so: ffi-module.o
 	$(CC) $(LDFLAGS) -o ffi-module.so ffi-module.o $(LIBS)
 
 ffi-module.o: ffi-module.c
-
-check: ffi-module.so test.so
-	LD_LIBRARY_PATH=`pwd`:$$LD_LIBRARY_PATH; \
-	  export LD_LIBRARY_PATH; \
-	$(GDB) $(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -l test.el \
-	-f ert-run-tests-batch-and-exit
 
 test-module: test.so
 
@@ -69,6 +63,12 @@ $(PKG)-autoloads.el: $(ELS)
     (let ((generated-autoload-file file))\
       (update-directory-autoloads default-directory))))" \
 	2>&1 | sed "/^Package autoload is deprecated$$/d"
+
+test: ffi-module.so test.so
+	LD_LIBRARY_PATH=`pwd`:$$LD_LIBRARY_PATH; \
+	  export LD_LIBRARY_PATH; \
+	$(GDB) $(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -l test.el \
+	-f ert-run-tests-batch-and-exit
 
 clean:
 	-rm -f ffi.elc ffi-autoloads.el ffi-module.o ffi-module.so
