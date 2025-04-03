@@ -71,5 +71,5 @@ test: ffi-module.so test.so
 	-f ert-run-tests-batch-and-exit
 
 clean:
-	-rm -f ffi.elc ffi-autoloads.el ffi-module.o ffi-module.so
-	-rm -f test.o test.so
+	@printf " Cleaning *...\n"
+	@rm -rf $(ELCS) $(PKG)-autoloads.el *.o *.so *.dylib
