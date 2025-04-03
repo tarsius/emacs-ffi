@@ -1,8 +1,21 @@
-This is an FFI for Emacs.  It is based on libffi and relies on the
-dynamic module support in order to be loaded into Emacs.  It is
-relatively full-featured, but for the time being low-level.
+# FFI for Emacs
 
-I'd appreciate your feedback, either via email or issues on github.
+This is an FFI for Emacs.  It is based on `libffi` and relies on
+the dynamic module support in order to be loaded into Emacs.  It
+is relatively full-featured, but for the time being low-level.
+
+# History and Status
+
+Tom Tromey created this package in 2015 but unfortunately did not
+specify a license.  In 2024 he finally specified that the license
+is GPL-3.0-or-later and I resumed work from half a decade ago, but
+progress is slow because I don't have an immediate need for this
+anymore.
+
+I do not recommend that you use this just yet.  I haven't even
+used it myself yet.
+
+Also rewriting of public 2025 history is still on the table.
 
 # Types
 
@@ -202,7 +215,3 @@ Currently all type conversions work the same in both directions.
 
 * `(ffi--define-union &rest TYPE...)`.  Define a new foreign union
   type, whose fields are the indicated types.
-
-# To-Do List
-
-* See the github issues.
