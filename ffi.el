@@ -5,6 +5,8 @@
 ;; Author: Tom Tromey <tom@tromey.com>
 ;; Package-Requires: ((emacs "25.1"))
 
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
 ;; This is is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
