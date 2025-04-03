@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+TOP := $(dir $(lastword $(MAKEFILE_LIST)))
+
 -include config.mk
 include default.mk
 
@@ -71,8 +73,7 @@ $(PKG)-autoloads.el: $(ELS)
 	2>&1 | sed "/^Package autoload is deprecated$$/d"
 
 test: ffi-module.so test.so
-	LD_LIBRARY_PATH=`pwd`:$$LD_LIBRARY_PATH; \
-	  export LD_LIBRARY_PATH; \
+	export LD_LIBRARY_PATH="$(TOP):$$LD_LIBRARY_PATH"; \
 	$(GDB) $(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -l test.el \
 	-f ert-run-tests-batch-and-exit
 
