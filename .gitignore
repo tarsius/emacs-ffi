@@ -1,6 +1,5 @@
+*.dylib
+*.o
+*.so
 *~
 config.mk
-ffi-module.o
-ffi-module.so
-test.o
-test.so
