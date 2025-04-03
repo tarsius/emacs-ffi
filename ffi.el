@@ -34,11 +34,11 @@
 (gv-define-simple-setter ffi--mem-ref ffi--mem-set t)
 
 (defmacro define-ffi-library (symbol name)
-  (let ((library (cl-gensym)))
-    (set library nil)
-    `(defun ,symbol ()
-       (or ,library
-           (setq ,library
+  `(progn
+     (defvar ,symbol nil)
+     (defun ,symbol ()
+       (or ,symbol
+           (setq ,symbol
                  (ffi--dlopen
                   (let ((load-suffixes (if (eq system-type 'darwin)
                                            (list module-file-suffix ".so")
