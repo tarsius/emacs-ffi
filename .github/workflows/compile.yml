@@ -1,0 +1,31 @@
+name: 'Compile'
+permissions: {}
+on: [push, pull_request]
+jobs:
+  main:
+    name: 'Compile'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Install'
+        run: |
+          sudo apt-get install emacs build-essential libffi-dev libltdl-dev
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: 'Compile modules'
+        run: |
+          make module test-module
+      - name: 'Compile lisp'
+        run: |
+          make lisp
+      - name: 'Compile lisp (byte-compile-error-on-warn)'
+        if: ${{ vars.byte_compile_error_on_warn != 'nil' }}
+        run: |
+          rm -rf *.elc
+          make EMACS_ARGS="--eval '(progn \
+          (setq byte-compile-error-on-warn t) \
+          ${{ vars.compile_error_settings }})'" lisp
+      - name: 'Test'
+        run: |
+          make test
