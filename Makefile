@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 -include config.mk
+include default.mk
 
 # Where your dynamic-module-enabled Emacs build lies.
 EMACS_BUILDDIR ?= /home/tromey/Emacs/emacs
