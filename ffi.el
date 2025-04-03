@@ -38,7 +38,12 @@
     (set library nil)
     `(defun ,symbol ()
        (or ,library
-           (setq ,library (ffi--dlopen ,name))))))
+           (setq ,library
+                 (ffi--dlopen
+                  (let ((load-suffixes (if (eq system-type 'darwin)
+                                           (list module-file-suffix ".so")
+                                         (list module-file-suffix))))
+                    (locate-library ,name))))))))
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
