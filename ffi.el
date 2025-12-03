@@ -1,8 +1,12 @@
 ;;; ffi.el --- FFI for Emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015-2017 Tom Tromey
+;; Copyright (C) 2020-2025 Jonas Bernoulli
 
 ;; Author: Tom Tromey <tom@tromey.com>
+;; Maintainer: Jonas Bernoulli <emacs.ffi@jonas.bernoulli.dev>
+;; `--> of this fork
+
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
