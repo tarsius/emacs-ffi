@@ -7,7 +7,7 @@
 ;; Maintainer: Jonas Bernoulli <emacs.ffi@jonas.bernoulli.dev>
 ;; `--> of this fork
 
-;; Package-Requires: ((emacs "25.1"))
+;; Package-Requires: ((emacs "29.1"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
