@@ -1,7 +1,3 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
-
-TOP := $(dir $(lastword $(MAKEFILE_LIST)))
-
 -include config.mk
 include default.mk
 
@@ -11,60 +7,54 @@ ELS   = ffi.el
 ELS  += test.el
 ELCS  = $(ELS:.el=.elc)
 
-EMACS      ?= emacs
-EMACS_ARGS ?=
-LOAD_PATH  ?= -L .
+DEPS  =
 
-LDFLAGS ?= -shared
-LIBS    ?= -lffi -lltdl
-CFLAGS  ?= -g3 -Og -finline-small-functions -shared -fPIC
+LOAD_PATH ?= -L .
 
-# Set this to debug "make test":
-# GDB = gdb --args
-
-all: module test-module lisp
+all: modules lisp
 
 help:
-	$(info make all          - generate lisp and manual)
-	$(info make test         - run tests)
-	$(info make clean        - remove generated files)
+	$(info make all        -- Build modules and lisp)
+	$(info make modules    -- Build modules)
+	$(info make lisp       -- Build lisp)
+	$(info make redo       -- Re-build from scratch)
+	$(info make test       -- Run tests)
+	$(info make clean      -- Remove built files)
 	@printf "\n"
 
-module: ffi-module.so
+redo: clean all
+
+modules: ffi-module.so test.so
 
 ffi-module.so: ffi-module.o
 	$(CC) $(LDFLAGS) -o ffi-module.so ffi-module.o $(LIBS)
 
-ffi-module.o: ffi-module.c
-
-test-module: test.so
-
 test.so: test.o
 	$(CC) $(LDFLAGS) -o test.so test.o
 
-test.o: test.c
+lisp: $(ELCS) autoloads check-declare
 
-lisp: $(ELCS) loaddefs check-declare
-
-loaddefs: $(PKG)-autoloads.el
+autoloads: $(PKG)-autoloads.el
 
 %.elc: %.el
 	@printf "Compiling $<\n"
-	@$(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -f batch-byte-compile $<
+	@$(EMACS_BATCH) --funcall batch-byte-compile $<
 
 check-declare:
 	@printf " Checking function declarations\n"
-	@$(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) \
-	--eval "(check-declare-directory default-directory)"
+	@$(EMACS_BATCH) --eval "(check-declare-directory default-directory)"
 
-test: ffi-module.so test.so
-	export LD_LIBRARY_PATH="$(TOP):$$LD_LIBRARY_PATH"; \
-	$(GDB) $(EMACS) -Q --batch $(EMACS_ARGS) $(LOAD_PATH) -l test.el \
-	-f ert-run-tests-batch-and-exit
+test: modules lisp
+	@printf "  Testing...\n"
+	@export LD_LIBRARY_PATH="$(TOP):$$LD_LIBRARY_PATH"; \
+	$(GDB) $(EMACS_BATCH) --load test.el \
+	--funcall ert-run-tests-batch-and-exit
+
+CLEAN = $(ELCS) $(PKG)-autoloads.el *.o *.so *.dylib
 
 clean:
-	@printf " Cleaning *...\n"
-	@rm -rf $(ELCS) $(PKG)-autoloads.el *.o *.so *.dylib
+	@printf " Cleaning...\n"
+	@rm -rf $(CLEAN)
 
 $(PKG)-autoloads.el: $(ELS)
 	@printf " Creating $@\n"

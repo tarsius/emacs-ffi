@@ -15,7 +15,7 @@ jobs:
           persist-credentials: false
       - name: 'Compile modules'
         run: |
-          make module test-module
+          make modules
       - name: 'Compile lisp'
         run: |
           make lisp
