@@ -47,7 +47,11 @@
                   (let ((load-suffixes (if (eq system-type 'darwin)
                                            (list module-file-suffix ".so")
                                          (list module-file-suffix))))
-                    (locate-library ,name))))))))
+                    (or (locate-library ,name)
+                        (signal 'file-missing
+                                (list "Cannot open load file"
+                                      "No such file or directory"
+                                      'name))))))))))
 
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
