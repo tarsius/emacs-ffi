@@ -21,11 +21,13 @@ jobs:
           make lisp
       - name: 'Compile lisp (byte-compile-error-on-warn)'
         if: ${{ vars.byte_compile_error_on_warn != 'nil' }}
+        env:
+          COMPILE_ERROR_SETTINGS: ${{ vars.compile_error_settings }}
         run: |
           rm -rf *.elc
           make EMACS_ARGS="--eval '(progn \
           (setq byte-compile-error-on-warn t) \
-          ${{ vars.compile_error_settings }})'" lisp
+          ${COMPILE_ERROR_SETTINGS})'" lisp
       - name: 'Test'
         run: |
           make test
