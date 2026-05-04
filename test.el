@@ -76,7 +76,7 @@
 (ert-deftest ffi-struct-modification ()
   (let ((struct-value (test-get-struct)))
     (should (eq (test-get-struct-int struct-value) 23))
-    (cl-incf (test-struct-intval struct-value))
+    (incf (test-struct-intval struct-value))
     (should (eq (test-get-struct-int struct-value) 24))))
 
 (define-ffi-union test-union

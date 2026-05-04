@@ -7,7 +7,9 @@
 ;; Maintainer: Jonas Bernoulli <emacs.ffi@jonas.bernoulli.dev>
 ;; `--> of this fork
 
-;; Package-Requires: ((emacs "29.1"))
+;; Package-Requires: (
+;;     (emacs  "29.1")
+;;     (compat "31.0"))
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -56,7 +58,7 @@
 (defmacro define-ffi-function (name c-name return-type arg-types library)
   (declare (indent defun))
   (let* ((n 0)
-         (args (mapcar (lambda (_) (intern (format "arg%d" (cl-incf n)))) arg-types))
+         (args (mapcar (lambda (_) (intern (format "arg%d" (incf n)))) arg-types))
          (sym (intern (concat "ffi-fun-" c-name))))
     `(progn
        (defvar ,sym nil)
@@ -81,7 +83,7 @@
     (mapcar (lambda (type)
               (prog1
                   (setq offset (ffi--align offset (ffi--type-alignment type)))
-                (cl-incf offset (ffi--type-size type))))
+                (incf offset (ffi--type-size type))))
             types)))
 
 (defun ffi--struct-union-helper (name slots definer-function layout-function)
